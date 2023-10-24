@@ -13,9 +13,11 @@ def a_plus_abs_b(a, b):
     ['return h(a, b)']
     """
     if b >= 0:
-        h = _____
+        # h = add
+        h = lambda x,y: x+y
     else:
-        h = _____
+        # h = sub
+        h = lambda x,y: x-y
     return h(a, b)
 
 
@@ -37,7 +39,8 @@ def two_of_three(x, y, z):
     >>> [type(x).__name__ for x in ast.parse(inspect.getsource(two_of_three)).body[0].body]
     ['Expr', 'Return']
     """
-    return _____
+    return x**2 + y**2 + z**2 - max(x,y,z)
+    # return min(x,y,z)**2 + (x+y+z-max(x,y,z)-min(x,y,z))**2
 
 
 def largest_factor(x):
@@ -51,6 +54,19 @@ def largest_factor(x):
     1
     """
     "*** YOUR CODE HERE ***"
+    # result_list = []
+    # for i in range(1,x):
+    #     if x%i == 0:
+    #         result_list.append(i)
+    # return max(result_list)
+
+    # 这个方法更好，因为最小的factor我们要求是2，也就是说我们只用从int(x/2)开始
+    # 检查就好，这样complexity更小；其次使用下面会从最大的factor开始找，并且一旦
+    # 找到立马返回。
+    for i in range(x//2, 0, -1):
+        if x % i == 0:
+            return i
+
 
 
 def if_function(condition, true_result, false_result):
@@ -96,13 +112,15 @@ def with_if_function():
 
 def cond():
     "*** YOUR CODE HERE ***"
+    return False
 
 def true_func():
     "*** YOUR CODE HERE ***"
+    print(42)
 
 def false_func():
     "*** YOUR CODE HERE ***"
-
+    print(47)
 
 def hailstone(x):
     """Print the hailstone sequence starting at x and return its
@@ -120,4 +138,13 @@ def hailstone(x):
     7
     """
     "*** YOUR CODE HERE ***"
-
+    length = 1
+    while x != 1:
+        print(x)
+        length+=1
+        if x%2==0:
+            x//=2
+        else:
+            x=3*x+1
+    print(x)
+    return length

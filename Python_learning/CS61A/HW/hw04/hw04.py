@@ -43,12 +43,13 @@ def end(s):
 def planet(size):
     """Construct a planet of some size."""
     assert size > 0
-    "*** YOUR CODE HERE ***"
+    return ['planet',size]
 
 def size(w):
     """Select the size of a planet."""
     assert is_planet(w), 'must call size on a planet'
     "*** YOUR CODE HERE ***"
+    return w[1]
 
 def is_planet(w):
     """Whether w is a planet."""
@@ -105,6 +106,10 @@ def balanced(m):
     True
     """
     "*** YOUR CODE HERE ***"
+    if is_planet(m):
+        return True
+    else:
+        return length(left(m))*total_weight(end(left(m))) == length(right(m))*total_weight(end(right(m))) and balanced(end(left(m))) and balanced(end(right(m)))
 
 def totals_tree(m):
     """Return a tree representing the mobile with its total weight at the root.
@@ -136,6 +141,10 @@ def totals_tree(m):
     True
     """
     "*** YOUR CODE HERE ***"
+    if is_planet(m):
+        return tree(total_weight(m))
+    else:
+        return tree(total_weight(m),[totals_tree(end(left(m))),totals_tree(end(right(m)))])
 
 
 def replace_leaf(t, find_value, replace_value):
@@ -168,6 +177,12 @@ def replace_leaf(t, find_value, replace_value):
     True
     """
     "*** YOUR CODE HERE ***"
+    if is_leaf(t):
+        if label(t) == find_value:
+            return tree(label=replace_value)
+        return copy_tree(t)
+    else:
+        return tree(label(t),[replace_leaf(k,find_value,replace_value) for k in branches(t)])
 
 
 def preorder(t):
@@ -181,6 +196,15 @@ def preorder(t):
     [2, 4, 6]
     """
     "*** YOUR CODE HERE ***"
+    # if is_leaf(t):
+    #     return [label(t)]
+    # else:
+    #     ans = [label(t)]
+    #     for subtree in branches(t):
+    #         ans += preorder(subtree)
+    #     return ans
+    return [label(t)] + sum([preorder(b) for b in branches(t)],[])
+        
 
 
 def has_path(t, phrase):
@@ -213,6 +237,9 @@ def has_path(t, phrase):
     """
     assert len(phrase) > 0, 'no path for empty phrases.'
     "*** YOUR CODE HERE ***"
+    if len(phrase) == 1:
+        return label(t) == phrase[0]
+    return label(t) == phrase[0] and True in [has_path(br, phrase[1:]) for br in branches(t) if len(phrase[1:]) > 0]
 
 
 def interval(a, b):

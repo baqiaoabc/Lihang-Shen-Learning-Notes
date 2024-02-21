@@ -50,6 +50,36 @@ class VendingMachine:
     'Here is your soda.'
     """
     "*** YOUR CODE HERE ***"
+    def __init__(self,product,price):
+        self.product = product
+        self.price = price
+        self.stock = 0
+        self.current_balance = 0
+
+    def vend(self):
+        if self.stock == 0:
+            return 'Inventory empty. Restocking required.'
+        elif self.current_balance < self.price:
+            return f'You must add ${self.price - self.current_balance} more funds.'
+        elif self.current_balance > self.price:
+            change,self.current_balance,self.stock = self.current_balance-self.price,0,self.stock-1
+            return f'Here is your {self.product} and ${change} change.'
+        else:
+            self.current_balance, self.stock = 0, self.stock - 1
+            return f'Here is your {self.product}.'
+
+    def add_funds(self, money):
+        if self.stock == 0:
+            return f"Inventory empty. Restocking required. Here is your ${money}."
+        else:
+            self.current_balance += money
+            return f'Current balance: ${self.current_balance}'
+        
+    
+    def restock(self,number):
+        self.stock += number
+        return f'Current {self.product} stock: {self.stock}'
+
 
 
 class Mint:
@@ -88,9 +118,12 @@ class Mint:
 
     def create(self, kind):
         "*** YOUR CODE HERE ***"
+        return kind(self.year)
+        
 
     def update(self):
         "*** YOUR CODE HERE ***"
+        self.year = Mint.current_year
 
 class Coin:
     def __init__(self, year):
@@ -98,6 +131,8 @@ class Coin:
 
     def worth(self):
         "*** YOUR CODE HERE ***"
+        time = Mint.current_year - self.year
+        return self.cents + (0 if time < 50 else time - 50)
 
 class Nickel(Coin):
     cents = 5
@@ -132,6 +167,35 @@ def is_bst(t):
     False
     """
     "*** YOUR CODE HERE ***"
+    def bst_min(BST):
+        if BST.is_leaf():
+            return BST.label
+        ans = min([BST.label]+[br.label for br in BST.branches])
+        return min([ans]+[bst_min(b) for b in BST.branches])
+
+    def bst_max(BST):
+        if BST.is_leaf():
+            return BST.label
+        ans = max([BST.label]+[br.label for br in BST.branches])
+        return max([ans]+[bst_max(b) for b in BST.branches])
+
+    if t.is_leaf():
+        return True
+    elif len(t.branches) == 1:
+        if t.label > t.branches[0].label:
+            return bst_max(t) == t.label and is_bst(t.branches[0])
+        elif t.label < t.branches[0].label:
+            return bst_min(t) == t.label and is_bst(t.branches[0])
+        else:
+            return is_bst(t.branches[0])
+    elif len(t.branches) == 2:
+        if t.label >= t.branches[0].label and t.label <= t.branches[1].label:
+            return (is_bst(t.branches[0]) and is_bst(t.branches[1]) 
+                    and bst_max(t.branches[0])<=t.label and bst_min(t.branches[1])>=t.label)
+        return False
+    else:
+        return False
+
 
 
 def store_digits(n):
@@ -150,6 +214,13 @@ def store_digits(n):
     >>> print("Do not use str or reversed!") if any([r in cleaned for r in ["str", "reversed"]]) else None
     """
     "*** YOUR CODE HERE ***"
+    inner_list = Link(n%10)
+    n = n//10
+    while n%10 != 0 or n//10 != 0:
+        outer_list = Link(n%10,inner_list)
+        inner_list = outer_list
+        n = n//10
+    return inner_list
 
 
 def path_yielder(t, value):
@@ -188,11 +259,12 @@ def path_yielder(t, value):
     """
 
     "*** YOUR CODE HERE ***"
+    if t.label == value:
+        yield [value]
+    for b in t.branches:
+        for path in path_yielder(b, value):
+            yield [t.label] + path
 
-    for _______________ in _________________:
-        for _______________ in _________________:
-
-            "*** YOUR CODE HERE ***"
 
 
 def remove_all(link , value):
